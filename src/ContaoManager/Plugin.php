@@ -18,7 +18,7 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface {
         return [
 
             BundleConfig::create('Contaoacademy\ZammadNCApiBundle\ContaoacademyZammadNCApiBundle')
-                ->setLoadAfter(['Contao\CoreBundle\ContaoCoreBundle'])
+                ->setLoadAfter(['Contao\CoreBundle\ContaoCoreBundle', 'notification_center'])
                 ->setReplace(['contao-zammad-nc-api-bundle']),
         ];
     }
