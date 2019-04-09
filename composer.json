@@ -1,0 +1,38 @@
+{
+  "name": "contaoacademy/contao-zammad-nc-api-bundle",
+  "type": "contao-bundle",
+  "license": "LGPL-3.0-or-later",
+  "autoload": {
+    "psr-4": {
+      "Contaoacademy\\ZammadNCApiBundle\\": "src/"
+    },
+    "classmap": [
+      "src/Resources/contao/"
+    ],
+    "exclude-from-classmap": [
+      "src/Resources/contao/config/",
+      "src/Resources/contao/dca/",
+      "src/Resources/contao/languages/",
+      "src/Resources/contao/templates/"
+    ]
+  },
+  "require": {
+    "php": "^7.1",
+    "contao/core-bundle": "^4.4",
+    "terminal42/notification_center": "^1.5"
+  },
+  "config": {
+    "preferred-install": "dist"
+  },
+  "replace": {
+    "contao-legacy/contao-zammad-nc-api-bundle": "self.version"
+  },
+  "extra": {
+    "contao": {
+      "sources": {
+        "": "system/modules/contao-zammad-nc-api-bundle"
+      }
+    },
+    "contao-manager-plugin": "Contaoacademy\\ZammadNCApiBundle\\ContaoManager\\Plugin"
+  }
+}
