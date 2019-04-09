@@ -9,6 +9,7 @@ class Zammad extends \NotificationCenter\Gateway\Base implements \NotificationCe
     protected $strPassword = null;
     protected $strUsername = null;
     protected $strRequest = null;
+    protected $strGroup = '';
 
 
     public function send( \NotificationCenter\Model\Message $objMessage, array $arrTokens, $strLanguage = '') {
@@ -16,6 +17,7 @@ class Zammad extends \NotificationCenter\Gateway\Base implements \NotificationCe
         $this->strPassword = \Config::get('zammadPassword');
         $this->strUsername = \Config::get('zammadUser');
         $this->strRequest = \Config::get('zammadHost');
+        $this->strGroup = $objMessage->getRelated('pid')->zammad_group ?: 'Users';
 
         $objCurl = curl_init();
 
@@ -35,10 +37,10 @@ class Zammad extends \NotificationCenter\Gateway\Base implements \NotificationCe
         $strRequest = $this->strRequest . '/api/v1/tickets';
         $arrRequest = [
             'title' => $arrTokens['form_subject'],
-            'group' => 'Users',
+            'group' => $this->strGroup,
             'article' => [
                 'subject' => $arrTokens['form_subject'],
-                'body' => $arrTokens['form_body'],
+                'body' => $this->collectBodyData( $arrTokens ),
                 'type' => 'note',
                 'internal' => false
             ],
@@ -71,6 +73,12 @@ class Zammad extends \NotificationCenter\Gateway\Base implements \NotificationCe
                 'firstname' => $arrTokens['form_firstname'] ?: '',
                 'lastname' => $arrTokens['form_lastname'] ?: '',
                 'email' => $arrTokens['form_email'],
+                'mobile' => $arrTokens['form_mobile'] ?: '',
+                'phone' => $arrTokens['form_phone'] ?: '',
+                'web' => $arrTokens['form_web'] ?: '',
+                'address' => $arrTokens['form_address'] ?: '',
+                'note' => $arrTokens['form_note'] ?: '',
+                'department' => $arrTokens['form_department'] ?: ''
             ];
 
             curl_setopt( $objCurl, CURLOPT_URL, $strRequest );
@@ -80,5 +88,30 @@ class Zammad extends \NotificationCenter\Gateway\Base implements \NotificationCe
 
             \System::log( $objResponse, __METHOD__, TL_GENERAL );
         }
+    }
+
+
+    protected function collectBodyData( $arrTokens ) {
+
+        global $objPage;
+
+        $strBody = '';
+
+        foreach ( $arrTokens as $strName => $strValue ) {
+
+            if ( strpos( $strName, 'form_' ) === false ) {
+
+                continue;
+            }
+
+            $strName = substr( $strName, 5 );
+            $strName = ucfirst( $strName );
+
+            $strBody .= $strName . ': ' . $strValue . PHP_EOL;
+        }
+
+        $strBody .= 'Alias: ' . $objPage->alias;
+
+        return $strBody;
     }
 }
