@@ -6,10 +6,11 @@ namespace Contaoacademy\ZammadNCApiBundle\Gateway;
 class Zammad extends \NotificationCenter\Gateway\Base implements \NotificationCenter\Gateway\GatewayInterface {
 
 
+    protected $strGroup = '';
+    protected $strRequest = null;
     protected $strPassword = null;
     protected $strUsername = null;
-    protected $strRequest = null;
-    protected $strGroup = '';
+    protected $arrApiFields = [ 'firstname', 'lastname', 'email', 'mobile', 'phone', 'web', 'address', 'note', 'department' ];
 
 
     public function send( \NotificationCenter\Model\Message $objMessage, array $arrTokens, $strLanguage = '') {
@@ -66,20 +67,13 @@ class Zammad extends \NotificationCenter\Gateway\Base implements \NotificationCe
 
         if ( empty( $arrResults ) ) {
 
+            $arrRequest = [];
             $strRequest = $this->strRequest . '/api/v1/users';
 
-            $arrRequest = [
+            foreach ( $this->arrApiFields as $strFieldname ) {
 
-                'firstname' => $arrTokens['form_firstname'] ?: '',
-                'lastname' => $arrTokens['form_lastname'] ?: '',
-                'email' => $arrTokens['form_email'],
-                'mobile' => $arrTokens['form_mobile'] ?: '',
-                'phone' => $arrTokens['form_phone'] ?: '',
-                'web' => $arrTokens['form_web'] ?: '',
-                'address' => $arrTokens['form_address'] ?: '',
-                'note' => $arrTokens['form_note'] ?: '',
-                'department' => $arrTokens['form_department'] ?: ''
-            ];
+                $arrRequest[ $strFieldname ] = $arrTokens['form_' . $strFieldname ] ?: '';
+            }
 
             curl_setopt( $objCurl, CURLOPT_URL, $strRequest );
             curl_setopt( $objCurl, CURLOPT_POST, 1 );
@@ -95,7 +89,7 @@ class Zammad extends \NotificationCenter\Gateway\Base implements \NotificationCe
 
         global $objPage;
 
-        $strBody = '';
+        $strBody = $arrTokens['form_body'] . PHP_EOL . PHP_EOL;
 
         foreach ( $arrTokens as $strName => $strValue ) {
 
@@ -105,8 +99,18 @@ class Zammad extends \NotificationCenter\Gateway\Base implements \NotificationCe
             }
 
             $strName = substr( $strName, 5 );
-            $strName = ucfirst( $strName );
 
+            if ( in_array( $strName, $this->arrApiFields ) ) {
+
+                continue;
+            }
+
+            if ( in_array( $strName, [ 'body', 'subject' ] ) ) {
+
+                continue;
+            }
+
+            $strName = ucfirst( $strName );
             $strBody .= $strName . ': ' . $strValue . PHP_EOL;
         }
 
