@@ -42,7 +42,8 @@ class Zammad extends \NotificationCenter\Gateway\Base implements \NotificationCe
             'article' => [
                 'subject' => $arrTokens['form_subject'],
                 'body' => $this->collectBodyData( $arrTokens ),
-                'type' => 'note',
+                'type' => 'web',
+                'to' => $arrTokens['form_email'],
                 'internal' => false
             ],
             'customer' => $arrTokens['form_email'],
