@@ -1,6 +1,12 @@
 {
   "name": "contaoacademy/contao-zammad-nc-api-bundle",
+  "description": "API Anbindung zum Ticket System Zammad über ein Gateway des Notification-Center",
   "type": "contao-bundle",
+  "keywords": [
+    "contao",
+    "zammad",
+    "notification-center"
+  ],
   "license": "LGPL-3.0-or-later",
   "autoload": {
     "psr-4": {
