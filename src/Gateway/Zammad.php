@@ -19,8 +19,7 @@ class Zammad extends \NotificationCenter\Gateway\Base implements \NotificationCe
         $this->strPassword = \Config::get('zammadPassword');
         $this->strUsername = \Config::get('zammadUser');
         $this->strRequest = \Config::get('zammadHost');
-        $this->strGroup = $objMessage->getRelated('pid')->zammad_group ?: 'Users';
-
+        $this->strGroup = $objMessage->zammad_group ?: 'Users';
         $this->arrHttpHeader[] = 'Content-Type: application/json';
 
         $objCurl = curl_init();
@@ -82,7 +81,7 @@ class Zammad extends \NotificationCenter\Gateway\Base implements \NotificationCe
 
             foreach ( $this->arrApiFields as $strFieldname ) {
 
-                $arrRequest[ $strFieldname ] = $arrTokens['form_' . $strFieldname ] ?: '';
+                $arrRequest[ $strFieldname ] = $arrTokens[ 'form_' . $strFieldname ] ?: '';
             }
 
             curl_setopt( $objCurl, CURLOPT_HTTPHEADER, $this->arrHttpHeader );
