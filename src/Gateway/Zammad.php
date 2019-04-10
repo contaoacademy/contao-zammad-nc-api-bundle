@@ -10,6 +10,7 @@ class Zammad extends \NotificationCenter\Gateway\Base implements \NotificationCe
     protected $strRequest = null;
     protected $strPassword = null;
     protected $strUsername = null;
+    protected $arrHttpHeader = [];
     protected $arrApiFields = [ 'firstname', 'lastname', 'email', 'mobile', 'phone', 'web', 'address', 'note', 'department' ];
 
 
@@ -20,10 +21,12 @@ class Zammad extends \NotificationCenter\Gateway\Base implements \NotificationCe
         $this->strRequest = \Config::get('zammadHost');
         $this->strGroup = $objMessage->getRelated('pid')->zammad_group ?: 'Users';
 
+        $this->arrHttpHeader[] = 'Content-Type: application/json';
+
         $objCurl = curl_init();
 
         curl_setopt( $objCurl, CURLOPT_USERPWD, $this->strUsername . ":" . $this->strPassword );
-        curl_setopt( $objCurl, CURLOPT_HTTPHEADER, [ 'Content-Type: application/json' ] );
+        curl_setopt( $objCurl, CURLOPT_HTTPHEADER, $this->arrHttpHeader );
         curl_setopt( $objCurl, CURLOPT_RETURNTRANSFER, true );
 
         $this->createUser( $arrTokens, $objCurl );
@@ -36,22 +39,29 @@ class Zammad extends \NotificationCenter\Gateway\Base implements \NotificationCe
     protected function createTicket( $arrTokens, $objCurl ) {
 
         $strRequest = $this->strRequest . '/api/v1/tickets';
+
         $arrRequest = [
             'title' => $arrTokens['form_subject'],
             'group' => $this->strGroup,
             'article' => [
                 'subject' => $arrTokens['form_subject'],
                 'body' => $this->collectBodyData( $arrTokens ),
-                'type' => 'note',
-                'internal' => false
+                'type' => 'web',
+                'internal' => false,
+                'to' => $arrTokens['form_email']
             ],
             'customer' => $arrTokens['form_email'],
-            'note' => ''
+            'note' => $arrTokens['form_subject']
         ];
 
+        $arrCustomHeader = $this->arrHttpHeader; // get standard header
+        $arrCustomHeader[] = 'X-On-Behalf-Of:' . $arrTokens['form_email'];
+
+        curl_setopt( $objCurl, CURLOPT_HTTPHEADER, $arrCustomHeader );
         curl_setopt( $objCurl, CURLOPT_URL, $strRequest );
         curl_setopt( $objCurl, CURLOPT_POST, 1 );
         curl_setopt( $objCurl, CURLOPT_POSTFIELDS, json_encode( $arrRequest, 512 ) );
+
         $objResponse = curl_exec( $objCurl );
 
         \System::log( $objResponse, __METHOD__, TL_GENERAL );
@@ -75,6 +85,7 @@ class Zammad extends \NotificationCenter\Gateway\Base implements \NotificationCe
                 $arrRequest[ $strFieldname ] = $arrTokens['form_' . $strFieldname ] ?: '';
             }
 
+            curl_setopt( $objCurl, CURLOPT_HTTPHEADER, $this->arrHttpHeader );
             curl_setopt( $objCurl, CURLOPT_URL, $strRequest );
             curl_setopt( $objCurl, CURLOPT_POST, 1 );
             curl_setopt( $objCurl, CURLOPT_POSTFIELDS, json_encode( $arrRequest, 512 ) );
