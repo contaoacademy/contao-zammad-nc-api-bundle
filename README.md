@@ -1,5 +1,5 @@
 # contao-zammad-nc-api
-API Anbindung zu [Ticket System Zammand](https://zammad.com/) über ein Gateway des Notification-Center
+API Anbindung zum [Ticket System Zammad](https://zammad.com/) über ein Gateway des Notification-Center
 
 ## Beschreibung
 Die Schnittstelle sendet Formulardaten direkt als neues Ticket an Zammad.
