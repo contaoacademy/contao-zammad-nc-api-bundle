@@ -7,6 +7,7 @@ class Zammad extends \NotificationCenter\Gateway\Base implements \NotificationCe
 
 
     protected $strGroup = '';
+    protected $strToken = '';
     protected $strRequest = null;
     protected $strPassword = null;
     protected $strUsername = null;
@@ -16,22 +17,39 @@ class Zammad extends \NotificationCenter\Gateway\Base implements \NotificationCe
 
     public function send( \NotificationCenter\Model\Message $objMessage, array $arrTokens, $strLanguage = '') {
 
-        $this->strPassword = \Config::get('zammadPassword');
-        $this->strUsername = \Config::get('zammadUser');
         $this->strRequest = \Config::get('zammadHost');
         $this->strGroup = $objMessage->zammad_group ?: 'Users';
         $this->arrHttpHeader[] = 'Content-Type: application/json';
 
         $objCurl = curl_init();
-
-        curl_setopt( $objCurl, CURLOPT_USERPWD, $this->strUsername . ":" . $this->strPassword );
+        $this->authentication( $objCurl );
         curl_setopt( $objCurl, CURLOPT_HTTPHEADER, $this->arrHttpHeader );
         curl_setopt( $objCurl, CURLOPT_RETURNTRANSFER, true );
-
         $this->createUser( $arrTokens, $objCurl );
         $this->createTicket( $arrTokens, $objCurl );
+        curl_close( $objCurl );
+    }
 
-        curl_close ( $objCurl );
+
+    protected function authentication( &$objCurl ) {
+
+        switch ( \Config::get('zammadAuthType') ) {
+
+            case 'basic':
+
+                $this->strPassword = \Config::get('zammadPassword');
+                $this->strUsername = \Config::get('zammadUser');
+                curl_setopt( $objCurl, CURLOPT_USERPWD, $this->strUsername . ":" . $this->strPassword );
+
+                break;
+
+            case 'token':
+
+                $this->strToken = \Config::get('zammadToken');
+                $this->arrHttpHeader[] = 'Authorization: Token token=' . $this->strToken;
+
+                break;
+        }
     }
 
 
@@ -84,7 +102,6 @@ class Zammad extends \NotificationCenter\Gateway\Base implements \NotificationCe
                 $arrRequest[ $strFieldname ] = $arrTokens[ 'form_' . $strFieldname ] ?: '';
             }
 
-            curl_setopt( $objCurl, CURLOPT_HTTPHEADER, $this->arrHttpHeader );
             curl_setopt( $objCurl, CURLOPT_URL, $strRequest );
             curl_setopt( $objCurl, CURLOPT_POST, 1 );
             curl_setopt( $objCurl, CURLOPT_POSTFIELDS, json_encode( $arrRequest, 512 ) );
