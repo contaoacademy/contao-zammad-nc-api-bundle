@@ -3,7 +3,7 @@
 $GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'zammadAuthType';
 $GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{zammad_settings},zammadAuthType';
 $GLOBALS['TL_DCA']['tl_settings']['subpalettes']['zammadAuthType_basic'] = 'zammadHost,zammadUser,zammadPassword';
-$GLOBALS['TL_DCA']['tl_settings']['subpalettes']['zammadAuthType_token'] = 'zammadToken';
+$GLOBALS['TL_DCA']['tl_settings']['subpalettes']['zammadAuthType_token'] = 'zammadHost,zammadToken';
 
 
 $GLOBALS['TL_DCA']['tl_settings']['fields']['zammadAuthType'] = [
