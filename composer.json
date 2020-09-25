@@ -7,6 +7,13 @@
     "zammad",
     "notification-center"
   ],
+  "homepage": "https://contao-academy.de",
+  "authors": [
+    {
+      "name": "Contao Academy",
+      "homepage": "https://contao-academy.de"
+    }
+  ],
   "license": "LGPL-3.0-or-later",
   "autoload": {
     "psr-4": {
@@ -40,5 +47,9 @@
       }
     },
     "contao-manager-plugin": "Contaoacademy\\ZammadNCApiBundle\\ContaoManager\\Plugin"
+  },
+  "support": {
+    "issues": "https://github.com/contaoacademy/contao-zammad-nc-api-bundle/issues",
+    "source": "https://github.com/contaoacademy/contao-zammad-nc-api-bundle",
   }
 }
