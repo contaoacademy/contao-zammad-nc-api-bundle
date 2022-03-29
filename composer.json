@@ -30,7 +30,7 @@
     ]
   },
   "require": {
-    "php": "^7.1",
+    "php": "^7.1 || ^8.0",
     "contao/core-bundle": "^4.4",
     "terminal42/notification_center": "^1.5"
   },
