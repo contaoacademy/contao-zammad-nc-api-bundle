@@ -17,6 +17,7 @@ Falls ein Kontakt in Zammad nicht angelegt ist, wird dieser ebenfalls erzeugt.
 Damit die Zuordnung korrekt funktioniert, müssen die Formularfelder bestimmte Namen haben:
 * firstname = Vorname
 * lastname = Nachname
+* subject = Titel des Tickets
 * email = E-Mail-Adresse
 * body = Ticket Inhalt
 * mobile = Mobilnummer
