@@ -5,8 +5,10 @@ API Anbindung zum [Ticket System Zammad](https://zammad.com/) über ein Gateway 
 Die Schnittstelle sendet Formulardaten direkt als neues Ticket an Zammad.
 Falls ein Kontakt in Zammad nicht angelegt ist, wird dieser ebenfalls erzeugt.
 
+## Dokumentation
+Eine ausführliche Doku findest Du hier: https://www.fenepedia.de/tools/zammad-connector
 
-## Konfiguration
+## Schnellstart-Anleitung
 1. System > Einstellungen > Zammad-Einstellungen (Host, Benutzer, Passwort)
 2. Notification Center > Neues Gateway vom Typ Zammad-API
 3. Neue Benachrichtigung (z.B. Formularübergragung)
