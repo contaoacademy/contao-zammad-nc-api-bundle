@@ -1,37 +1,49 @@
-# contao-zammad-nc-api
-API Anbindung zum [Ticket System Zammad](https://zammad.com/) über ein Gateway des Notification-Center
+# Zammad API Schnittstelle
+API Anbindung zum [Ticket System Zammad](https://zammad.com/) über ein eigenes Gateway des Notification Centers.
 
 ## Beschreibung
-Die Schnittstelle sendet Formulardaten direkt als neues Ticket an Zammad.
-Falls ein Kontakt in Zammad nicht angelegt ist, wird dieser ebenfalls erzeugt.
+Über die Schnittstelle können Formulardaten direkt als neues Ticket an Zammad gesendet werden. Falls ein Kontakt in Zammad nicht gefunden wird, wird dieser ebenfalls erzeugt. Im Nachrichtentext können beliebige Daten anhand von Simple Tokens ergänzt werden.
 
 ## Dokumentation
 Eine ausführliche Doku findest Du hier: https://www.fenepedia.de/tools/zammad-connector
 
 ## Schnellstart-Anleitung
-1. System > Einstellungen > Zammad-Einstellungen (Host, Benutzer, Passwort)
-2. Notification Center > Neues Gateway vom Typ Zammad-API
-3. Neue Benachrichtigung (z.B. Formularübergragung)
-4. Neue Nachricht erstellen: Gateway = Zammad und Zammad Gruppe hinterlegen
-5. Benachrichtigung zuordnen: Formulargenerator > Formular > Benachrichtigung auswählen
+1. In Zammad ein neuen Zugriffstoken generieren: User > Profil > Token-Zugriff > Erstellen (Berechtigung: `ticket.agent`)
+2. Notification Center > Neues Gateway vom Typ Zammad-API (Host + Token hinterlegen)
+3. Neue Benachrichtigung (z. B. Formularübergragung)
+4. Neue Nachricht erstellen: Gateway = Zammad
+5. Pflichtfelder ausfüllen: E-Mail, Ticket-Betreff, Ticket-Gruppe, Nachrichtentext (Simple Token möglich: `##form_feldname##` )
+6. Kunden-Parameter bei Bedarf ergänzen (Empfehlung: `firstname`, `lastname`)
 
 ## Zuordnung der Formularfelder
-Damit die Zuordnung korrekt funktioniert, müssen die Formularfelder bestimmte Namen haben:
+Ab Version 3.0 findet die Zuordnung der Felder über Simple Tokens statt. Anbei noch eine Liste von bekannten Feldnamen für die Kundendaten:
 * firstname = Vorname
 * lastname = Nachname
-* subject = Titel des Tickets
-* email = E-Mail-Adresse
-* body = Ticket Inhalt
 * mobile = Mobilnummer
 * phone = Telefonnummer
+* fax = Faxnummer
 * web = Website
 * address = Adresse
-* note = Notiz
 * department = Abteilung
+* street = Straße
+* zip = Postleitzahl
+* city = Stadt
+* Country = Land
+* note = Notiz
 
-Im Body wird automatisch der *Alias* der Seite ergänzt.
-Weitere Felder im Formular werden automatisch am Ende des Tickets dem Body hinzugefügt.
 
-## Credits
-* Programmierung: https://alexandernaumov.de/
-* Auftraggeber: https://contao-academy.de/
+## Welche Version soll ich installieren?
+
+| Contao Version  | PHP Version        | NC-Version         | Zammad-Erweiterung   |
+|-----------------|--------------------|--------------------|-------------------------|
+| 4.9 \|\| 4.13     | 7.*                | 1.6.*            | 2.*                   |
+| 4.13.* \|\| 5.*   | \>= ^8.1           | 2.*              | 3.*                     |
+
+
+## Unterstützer:innen
+
+Die Entwicklung der Erweiterung wurde von den folgenden Personen bzw. Unternehmen ermöglicht:
+- Fritz Michael Gschwantner | [inspiredminds](https://www.inspiredminds.at/)
+- [Alexander Naumov](https://alexandernaumov.de/)
+- Christian Feneberg | [Contao Academy](https://contao-academy.de/)
+
