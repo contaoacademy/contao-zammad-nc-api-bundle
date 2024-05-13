@@ -1,32 +1,31 @@
 <?php
 
-namespace Contaoacademy\ZammadNCApiBundle\ContaoManager;
+declare(strict_types=1);
 
-use Symfony\Component\HttpKernel\KernelInterface;
-use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
+/*
+ * This file is part of the Contao Zammad Gateway extension.
+ *
+ * (c) Contao Academy
+ *
+ * @license LGPL-3.0-or-later
+ */
+
+namespace ContaoAcademy\ZammadNCApiBundle\ContaoManager;
+
+use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
+use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
-use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
-use Symfony\Component\Config\Loader\LoaderResolverInterface;
+use ContaoAcademy\ZammadNCApiBundle\ZammadNCApiBundle;
+use Terminal42\NotificationCenterBundle\Terminal42NotificationCenterBundle;
 
-
-class Plugin implements BundlePluginInterface, RoutingPluginInterface {
-
-
-    public function getBundles( ParserInterface $parser ) {
-
+class Plugin implements BundlePluginInterface
+{
+    public function getBundles(ParserInterface $parser)
+    {
         return [
-
-            BundleConfig::create('Contaoacademy\ZammadNCApiBundle\ContaoacademyZammadNCApiBundle')
-                ->setLoadAfter(['Contao\CoreBundle\ContaoCoreBundle', 'notification_center'])
-                ->setReplace(['contao-zammad-nc-api-bundle']),
+            BundleConfig::create(ZammadNCApiBundle::class)
+                ->setLoadAfter([ContaoCoreBundle::class, Terminal42NotificationCenterBundle::class]),
         ];
-    }
-
-
-    public function getRouteCollection( LoaderResolverInterface $resolver, KernelInterface $kernel ) {
-        return $resolver
-            ->resolve( __DIR__ . '/../Resources/config/routing.yml' )
-            ->load( __DIR__ . '/../Resources/config/routing.yml' );
     }
 }

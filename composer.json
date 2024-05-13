@@ -1,55 +1,57 @@
 {
-  "name": "contaoacademy/contao-zammad-nc-api-bundle",
-  "description": "API Anbindung zum Ticket System Zammad über ein Gateway des Notification-Center",
-  "type": "contao-bundle",
-  "keywords": [
-    "contao",
-    "zammad",
-    "notification-center"
-  ],
-  "homepage": "https://contao-academy.de",
-  "authors": [
-    {
-      "name": "Contao Academy",
-      "homepage": "https://contao-academy.de"
-    }
-  ],
-  "license": "LGPL-3.0-or-later",
-  "autoload": {
-    "psr-4": {
-      "Contaoacademy\\ZammadNCApiBundle\\": "src/"
-    },
-    "classmap": [
-      "src/Resources/contao/"
+    "name": "contaoacademy/contao-zammad-nc-api-bundle",
+    "description": "API Anbindung zum Ticket System Zammad über ein Gateway des Notification-Center",
+    "type": "contao-bundle",
+    "keywords": [
+        "contao",
+        "zammad",
+        "notification-center"
     ],
-    "exclude-from-classmap": [
-      "src/Resources/contao/config/",
-      "src/Resources/contao/dca/",
-      "src/Resources/contao/languages/",
-      "src/Resources/contao/templates/"
-    ]
-  },
-  "require": {
-    "php": "^7.1 || ^8.0",
-    "contao/core-bundle": "^4.4",
-    "terminal42/notification_center": "^1.5"
-  },
-  "config": {
-    "preferred-install": "dist"
-  },
-  "replace": {
-    "contao-legacy/contao-zammad-nc-api-bundle": "self.version"
-  },
-  "extra": {
-    "contao": {
-      "sources": {
-        "": "system/modules/contao-zammad-nc-api-bundle"
-      }
+    "homepage": "https://contao-academy.de",
+    "authors": [
+        {
+            "name": "Contao Academy",
+            "homepage": "https://contao-academy.de",
+            "role": "Owner"
+        },
+        {
+            "name": "Fritz Michael Gschwantner",
+            "email": "fmg@inspiredminds.at",
+            "role": "Developer"
+        }
+    ],
+    "license": "LGPL-3.0-or-later",
+    "autoload": {
+        "psr-4": {
+            "ContaoAcademy\\ZammadNCApiBundle\\": "src/"
+        }
     },
-    "contao-manager-plugin": "Contaoacademy\\ZammadNCApiBundle\\ContaoManager\\Plugin"
-  },
-  "support": {
-    "issues": "https://github.com/contaoacademy/contao-zammad-nc-api-bundle/issues",
-    "source": "https://github.com/contaoacademy/contao-zammad-nc-api-bundle"
-  }
+    "require": {
+        "php": ">=8.1",
+        "codefog/contao-haste": "^4.25 || ^5.1",
+        "contao/core-bundle": "^4.13 || ^5.3",
+        "terminal42/notification_center": "^2.0",
+        "symfony/config": "^5.4 || ^6.4",
+        "symfony/dependency-injection": "^5.4 || ^6.4",
+        "symfony/http-client": "^5.4 || ^6.4",
+        "symfony/http-kernel": "^5.4 || ^6.4"
+    },
+    "extra": {
+        "contao-manager-plugin": "ContaoAcademy\\ZammadNCApiBundle\\ContaoManager\\Plugin"
+    },
+    "support": {
+        "issues": "https://github.com/contaoacademy/contao-zammad-nc-api-bundle/issues",
+        "source": "https://github.com/contaoacademy/contao-zammad-nc-api-bundle"
+    },
+    "require-dev": {
+        "contao/easy-coding-standard": "^6.0",
+        "contao/rector": "^1.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "contao-components/installer": true,
+            "php-http/discovery": false,
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
 }
