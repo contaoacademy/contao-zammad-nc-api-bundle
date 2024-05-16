@@ -4,6 +4,9 @@ API Anbindung zum [Ticket System Zammad](https://zammad.com/) über ein eigenes 
 ## Beschreibung
 Über die Schnittstelle können Formulardaten direkt als neues Ticket an Zammad gesendet werden. Falls ein Kontakt in Zammad nicht gefunden wird, wird dieser ebenfalls erzeugt. Im Nachrichtentext können beliebige Daten anhand von Simple Tokens ergänzt werden.
 
+> [!IMPORTANT]  
+> Die Version 3.* ist nicht mit den Vorgängerversionen kompatibel. Bei einem Update von 2.* auf 3.* muss die Erweiterung neu konfiguriert werden.
+
 ## Dokumentation
 Eine ausführliche Doku findest Du hier: https://www.fenepedia.de/tools/zammad-connector
 
