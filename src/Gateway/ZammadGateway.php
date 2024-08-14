@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace ContaoAcademy\ZammadNCApiBundle\Gateway;
 
+use Codefog\HasteBundle\StringParser;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\StringUtil;
 use Contao\Validator;
 use ContaoAcademy\ZammadNCApiBundle\Config\ZammadMessageConfig;
 use ContaoAcademy\ZammadNCApiBundle\Exception\ZammadGatewayException;
 use ContaoAcademy\ZammadNCApiBundle\Parcel\Stamp\ZammadMessageStamp;
-use ContaoAcademy\ZammadNCApiBundle\Util;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -40,6 +40,7 @@ class ZammadGateway implements GatewayInterface
         private readonly LoggerInterface $contaoGeneralLogger,
         private readonly LoggerInterface $contaoErrorLogger,
         private readonly KernelInterface $kernel,
+        private readonly StringParser $stringParser,
     ) {
     }
 
@@ -110,25 +111,25 @@ class ZammadGateway implements GatewayInterface
 
         $messageConfig = $parcel->getMessageConfig();
         $tokens = $parcel->getStamp(TokenCollectionStamp::class)->tokenCollection->forSimpleTokenParser();
-        $email = Util::recursiveReplaceTokensAndTags($messageConfig->getString('zammad_email'), $tokens);
+        $email = $this->stringParser->recursiveReplaceTokensAndTags($messageConfig->getString('zammad_email'), $tokens);
 
         if (!$email || !Validator::isEmail($email)) {
             throw new ZammadGatewayException('Invalid email address "'.$email.'" given.');
         }
 
-        if (!$title = Util::recursiveReplaceTokensAndTags($messageConfig->getString('zammad_title'), $tokens)) {
+        if (!$title = $this->stringParser->recursiveReplaceTokensAndTags($messageConfig->getString('zammad_title'), $tokens)) {
             throw new ZammadGatewayException('No title given!');
         }
 
-        if (!$group = Util::recursiveReplaceTokensAndTags($messageConfig->getString('zammad_group'), $tokens)) {
+        if (!$group = $this->stringParser->recursiveReplaceTokensAndTags($messageConfig->getString('zammad_group'), $tokens)) {
             throw new ZammadGatewayException('No group given!');
         }
 
         $parameters = [];
 
         foreach (StringUtil::deserialize($messageConfig->getString('zammad_params'), true) as $param) {
-            $key = Util::recursiveReplaceTokensAndTags((string) $param['key'], $tokens);
-            $value = Util::recursiveReplaceTokensAndTags((string) $param['value'], $tokens);
+            $key = $this->stringParser->recursiveReplaceTokensAndTags((string) $param['key'], $tokens);
+            $value = $this->stringParser->recursiveReplaceTokensAndTags((string) $param['value'], $tokens);
             $parameters[$key] = $value;
         }
 
@@ -137,7 +138,7 @@ class ZammadGateway implements GatewayInterface
             'parameters' => $parameters,
             'title' => $title,
             'group' => $group,
-            'body' => Util::recursiveReplaceTokensAndTags($messageConfig->getString('zammad_body'), $tokens),
+            'body' => $this->stringParser->recursiveReplaceTokensAndTags($messageConfig->getString('zammad_body'), $tokens),
         ]);
     }
 
