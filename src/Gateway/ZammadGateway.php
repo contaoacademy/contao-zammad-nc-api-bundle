@@ -81,7 +81,7 @@ class ZammadGateway implements GatewayInterface
                         ],
                     ],
                     'headers' => [
-                        'X-On-Behalf-Of' => $customerId,
+                        'From' => $customerId,
                     ],
                 ],
             );
