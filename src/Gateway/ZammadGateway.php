@@ -163,7 +163,7 @@ class ZammadGateway implements GatewayInterface
             '/api/v1/users/search',
             [
                 'query' => [
-                    'query' => 'email.keyword:'.$config->getEmail(),
+                    'query' => \sprintf('email.keyword:"%s"', $config->getEmail()),
                     'limit' => 1,
                 ],
             ],
