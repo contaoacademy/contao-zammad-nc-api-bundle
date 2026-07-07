@@ -55,4 +55,11 @@ $GLOBALS['TL_DCA']['tl_nc_message']['fields']['zammad_body'] = [
     'sql' => ['type' => 'text', 'length' => MySQLPlatform::LENGTH_LIMIT_TEXT, 'notnull' => false],
 ];
 
-$GLOBALS['TL_DCA']['tl_nc_message']['palettes']['zammad'] = '{title_legend},title,gateway;{zammad_customer_legend},zammad_email,zammad_params;{zammad_ticket_legend},zammad_title,zammad_group,zammad_body;{publish_legend},published';
+$GLOBALS['TL_DCA']['tl_nc_message']['fields']['zammad_html'] = [
+    'exclude' => true,
+    'inputType' => 'checkbox',
+    'eval' => ['tl_class' => 'clr'],
+    'sql' => ['type' => 'boolean', 'default' => false],
+];
+
+$GLOBALS['TL_DCA']['tl_nc_message']['palettes']['zammad'] = '{title_legend},title,gateway;{zammad_customer_legend},zammad_email,zammad_params;{zammad_ticket_legend},zammad_title,zammad_group,zammad_body,zammad_html;{publish_legend},published';

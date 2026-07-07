@@ -76,6 +76,7 @@ class ZammadGateway implements GatewayInterface
                         'article' => [
                             'subject' => $config->getTitle(),
                             'body' => $config->getBody(),
+                            'content_type' => $config->isHtml() ? 'text/html' : 'text/plain',
                             'type' => 'web',
                             'internal' => false,
                         ],
@@ -139,6 +140,7 @@ class ZammadGateway implements GatewayInterface
             'title' => $title,
             'group' => $group,
             'body' => $this->stringParser->recursiveReplaceTokensAndTags($messageConfig->getString('zammad_body'), $tokens),
+            'html' => $messageConfig->getBoolean('zammad_html'),
         ]);
     }
 

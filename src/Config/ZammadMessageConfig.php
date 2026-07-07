@@ -40,4 +40,9 @@ class ZammadMessageConfig extends AbstractConfig
     {
         return $this->getString('body');
     }
+
+    public function isHtml(): bool
+    {
+        return $this->getBoolean('html');
+    }
 }

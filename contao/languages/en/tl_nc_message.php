@@ -17,3 +17,4 @@ $GLOBALS['TL_LANG']['tl_nc_message']['zammad_params'] = ['Customer parameters', 
 $GLOBALS['TL_LANG']['tl_nc_message']['zammad_title'] = ['Ticket title', "The text or simple token that should be used for the ticket's title (e.g. ##form_subject##)."];
 $GLOBALS['TL_LANG']['tl_nc_message']['zammad_group'] = ['Ticket group', 'The Zammad group to which this ticket will be assigned.'];
 $GLOBALS['TL_LANG']['tl_nc_message']['zammad_body'] = ['Message body', 'The message body for the ticket. Can contain text and simple tokens.'];
+$GLOBALS['TL_LANG']['tl_nc_message']['zammad_html'] = ['Send message as HTML', 'If enabled, the message is sent to Zammad as HTML (content_type: text/html). Otherwise as plain text (text/plain).'];
