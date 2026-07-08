@@ -45,4 +45,12 @@ class ZammadMessageConfig extends AbstractConfig
     {
         return $this->getBoolean('html');
     }
+
+    /**
+     * @return array<string>
+     */
+    public function getAttachmentVouchers(): array
+    {
+        return $this->get('attachments', []);
+    }
 }
