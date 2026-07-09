@@ -22,10 +22,13 @@ use ContaoAcademy\ZammadNCApiBundle\Parcel\Stamp\ZammadMessageStamp;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Terminal42\NotificationCenterBundle\BulkyItem\BulkyItemStorage;
+use Terminal42\NotificationCenterBundle\BulkyItem\FileItem;
 use Terminal42\NotificationCenterBundle\Config\GatewayConfig;
 use Terminal42\NotificationCenterBundle\Exception\Parcel\CouldNotDeliverParcelException;
 use Terminal42\NotificationCenterBundle\Gateway\GatewayInterface;
 use Terminal42\NotificationCenterBundle\Parcel\Parcel;
+use Terminal42\NotificationCenterBundle\Parcel\Stamp\BulkyItemsStamp;
 use Terminal42\NotificationCenterBundle\Parcel\Stamp\GatewayConfigStamp;
 use Terminal42\NotificationCenterBundle\Parcel\Stamp\TokenCollectionStamp;
 use Terminal42\NotificationCenterBundle\Receipt\Receipt;
@@ -41,6 +44,7 @@ class ZammadGateway implements GatewayInterface
         private readonly LoggerInterface $contaoErrorLogger,
         private readonly KernelInterface $kernel,
         private readonly StringParser $stringParser,
+        private readonly BulkyItemStorage $bulkyItemStorage,
     ) {
     }
 
@@ -64,6 +68,18 @@ class ZammadGateway implements GatewayInterface
             $config = $parcel->getStamp(ZammadMessageStamp::class)->zammadMessageConfig;
             $customerId = $this->getCustomerId($client, $config);
 
+            $article = [
+                'subject' => $config->getTitle(),
+                'body' => $config->getBody(),
+                'content_type' => $config->isHtml() ? 'text/html' : 'text/plain',
+                'type' => 'web',
+                'internal' => false,
+            ];
+
+            if ($attachments = $this->buildAttachments($config)) {
+                $article['attachments'] = $attachments;
+            }
+
             // Create the ticket
             $response = $client->request(
                 'POST',
@@ -73,13 +89,7 @@ class ZammadGateway implements GatewayInterface
                         'customer_id' => $customerId,
                         'title' => $config->getTitle(),
                         'group' => $config->getGroup(),
-                        'article' => [
-                            'subject' => $config->getTitle(),
-                            'body' => $config->getBody(),
-                            'content_type' => $config->isHtml() ? 'text/html' : 'text/plain',
-                            'type' => 'web',
-                            'internal' => false,
-                        ],
+                        'article' => $article,
                     ],
                     'headers' => [
                         'From' => $customerId,
@@ -141,7 +151,69 @@ class ZammadGateway implements GatewayInterface
             'group' => $group,
             'body' => $this->stringParser->recursiveReplaceTokensAndTags($messageConfig->getString('zammad_body'), $tokens),
             'html' => $messageConfig->getBoolean('zammad_html'),
+            'attachments' => $this->resolveAttachmentVouchers($parcel, $messageConfig->getString('zammad_attachment_tokens'), $tokens),
         ]);
+    }
+
+    /**
+     * Resolves the configured file tokens to bulky item vouchers. Only vouchers that are
+     * actually registered as bulky items on the parcel are kept (same guard the mailer uses).
+     *
+     * @param array<string, string> $tokens
+     *
+     * @return array<string>
+     */
+    private function resolveAttachmentVouchers(Parcel $parcel, string $tokenList, array $tokens): array
+    {
+        if ('' === $tokenList || !$parcel->hasStamp(BulkyItemsStamp::class)) {
+            return [];
+        }
+
+        $bulkyItemsStamp = $parcel->getStamp(BulkyItemsStamp::class);
+        $vouchers = [];
+
+        foreach (StringUtil::trimsplit(',', $tokenList) as $token) {
+            if ('' === $token) {
+                continue;
+            }
+
+            $resolved = $this->stringParser->recursiveReplaceTokensAndTags($token, $tokens);
+
+            foreach (StringUtil::trimsplit(',', $resolved) as $voucher) {
+                if ('' !== $voucher && $bulkyItemsStamp->has($voucher)) {
+                    $vouchers[] = $voucher;
+                }
+            }
+        }
+
+        return $vouchers;
+    }
+
+    /**
+     * @return array<array{filename: string, data: string, 'mime-type': string}>
+     */
+    private function buildAttachments(ZammadMessageConfig $config): array
+    {
+        $attachments = [];
+
+        foreach ($config->getAttachmentVouchers() as $voucher) {
+            $item = $this->bulkyItemStorage->retrieve($voucher);
+
+            if (!$item instanceof FileItem) {
+                continue;
+            }
+
+            $contents = $item->getContents();
+            $data = \is_resource($contents) ? stream_get_contents($contents) : (string) $contents;
+
+            $attachments[] = [
+                'filename' => $item->getName(),
+                'data' => base64_encode((string) $data),
+                'mime-type' => $item->getMimeType(),
+            ];
+        }
+
+        return $attachments;
     }
 
     private function createClientForGateway(GatewayConfig $gatewayConfig): HttpClientInterface

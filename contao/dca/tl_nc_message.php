@@ -62,4 +62,12 @@ $GLOBALS['TL_DCA']['tl_nc_message']['fields']['zammad_html'] = [
     'sql' => ['type' => 'boolean', 'default' => false],
 ];
 
-$GLOBALS['TL_DCA']['tl_nc_message']['palettes']['zammad'] = '{title_legend},title,gateway;{zammad_customer_legend},zammad_email,zammad_params;{zammad_ticket_legend},zammad_title,zammad_group,zammad_body,zammad_html;{publish_legend},published';
+$GLOBALS['TL_DCA']['tl_nc_message']['fields']['zammad_attachment_tokens'] = [
+    'exclude' => true,
+    'inputType' => 'text',
+    'eval' => ['tl_class' => 'long clr', 'decodeEntities' => true, 'maxlength' => 255],
+    'nc_context' => TokenContext::File,
+    'sql' => ['type' => 'string', 'length' => 255, 'default' => null, 'notnull' => false],
+];
+
+$GLOBALS['TL_DCA']['tl_nc_message']['palettes']['zammad'] = '{title_legend},title,gateway;{zammad_customer_legend},zammad_email,zammad_params;{zammad_ticket_legend},zammad_title,zammad_group,zammad_body,zammad_html;{zammad_attachments_legend},zammad_attachment_tokens;{publish_legend},published';
