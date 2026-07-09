@@ -1,6 +1,6 @@
 # Zammad Gateway Changelog
 
-## 3.3.0 (unreleased)
+## 3.3.0 (2026-07-09)
 
 **New features:**
 
